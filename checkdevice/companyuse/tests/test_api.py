@@ -61,6 +61,22 @@ class CompanyUseApiTestCase(APITestCase):
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertEqual(3, CompanyUse.objects.all().count())
 
+    def test_create_not_staff(self):
+        self.assertEqual(2, CompanyUse.objects.all().count())
+        '''логиним обычного пользователя'''
+        self.client.force_login(self.user)
+        url = reverse('companyuse-list')
+        '''Создаём данные для POST запроса и делаем даныые json формата'''
+        company_3 = {
+            'name': 'Эксплуатант 3'
+        }
+        data_json = json.dumps(company_3)
+        '''self.client - в роли клиента выступает браузер, который даёт данные c url'''
+        response = self.client.post(url, data=data_json, content_type='application/json')
+        '''ипортируем status из rest framework'''
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertEqual(2, CompanyUse.objects.all().count())
+
     def test_put(self):
         '''логиним пользователя'''
         self.client.force_login(self.user_staff)
@@ -79,6 +95,24 @@ class CompanyUseApiTestCase(APITestCase):
         self.company_1.refresh_from_db()
         self.assertEqual('Эксплуатант 1 (лучший эксплуатант)', self.company_1.name)
 
+    def test_put_not_staff(self):
+        '''логиним обычного пользователя'''
+        self.client.force_login(self.user)
+        '''передаём в url id компании'''
+        url = reverse('companyuse-detail', args=(self.company_1.id,))
+        '''Создаём данные для POST запроса и делаем даныые json формата'''
+        data = {
+            'name': 'Эксплуатант 1 (альфа-поверитель)'
+        }
+        data_json = json.dumps(data)
+        '''self.client - в роли клиента выступает браузер, который даёт данные c url'''
+        response = self.client.put(url, data=data_json, content_type='application/json')
+        '''ипортируем status из rest framework'''
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        '''обновляем изменённый company_1 в классе test'''
+        self.company_1.refresh_from_db()
+        self.assertEqual('Эксплуатант 1', self.company_1.name)
+
     def test_delete(self):
         self.assertEqual(2, CompanyUse.objects.all().count())
         '''логиним пользователя'''
@@ -89,3 +123,14 @@ class CompanyUseApiTestCase(APITestCase):
         '''ипортируем status из rest framework'''
         self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
         self.assertEqual(1, CompanyUse.objects.all().count())
+
+    def test_delete_not_staff(self):
+        self.assertEqual(2, CompanyUse.objects.all().count())
+        '''логиним обычного пользователя'''
+        self.client.force_login(self.user)
+        url = reverse('companyuse-detail', args=(self.company_2.id,))
+        '''self.client - в роли клиента выступает браузер, который даёт данные c url'''
+        response = self.client.delete(url)
+        '''ипортируем status из rest framework'''
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertEqual(2, CompanyUse.objects.all().count())

@@ -33,7 +33,7 @@ router.register(r'companycheck', CompanyCheckViewSet, )
 router.register(r'companyuse', CompanyUseViewSet)
 router.register(r'classofdevice', ClassOfDeviceViewSet)
 router.register(r'intervalcheck', IntervalCheckViewSet)
-router.register(r'intervalcheck', TypeOfSiViewSet)
+router.register(r'typeofsi', TypeOfSiViewSet)
 
 urlpatterns = [
     path('grappelli/', include('grappelli.urls')),
