@@ -22,6 +22,7 @@ from rest_framework import routers
 from companycheck.views import CompanyCheckViewSet
 from companyuse.views import CompanyUseViewSet
 from classofdevice.views import ClassOfDeviceViewSet
+from device.views import DeviceViewSet
 from intervalcheck.views import IntervalCheckViewSet
 from typeofsi.views import TypeOfSiViewSet
 
@@ -34,11 +35,13 @@ router.register(r'companyuse', CompanyUseViewSet)
 router.register(r'classofdevice', ClassOfDeviceViewSet)
 router.register(r'intervalcheck', IntervalCheckViewSet)
 router.register(r'typeofsi', TypeOfSiViewSet)
+router.register(r'device', DeviceViewSet)
 
 urlpatterns = [
     path('grappelli/', include('grappelli.urls')),
     path('admin/', admin.site.urls),
     path('auth/', o_auth),
+    path('__debug__/', include('debug_toolbar.urls')),
     re_path('', include('social_django.urls', namespace='social')),
 ]
 # add url to urlpatters
